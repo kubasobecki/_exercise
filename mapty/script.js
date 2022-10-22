@@ -108,6 +108,16 @@ class App {
     inputDistance.focus();
   }
 
+  _clearHideForm() {
+    form.classList.add('hidden');
+    form.style.display = 'none';
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
+  }
+
   _validateFields() {
     if (
       !+inputDistance.value > 0 ||
@@ -234,23 +244,39 @@ class App {
     form.insertAdjacentHTML('afterend', workoutHTML);
   }
 
-  _clearHideForm() {
-    form.classList.add('hidden');
-    form.style.display = 'none';
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputElevation.value =
-        '';
-  }
-
   _storeWorkouts(workout) {
     this.#workouts.push(workout);
     localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
 
   _loadWorkouts() {
-    this.#workouts = JSON.parse(localStorage.getItem('workouts')) ?? [];
+    const localWorkouts = JSON.parse(localStorage.getItem('workouts')) ?? [];
+
+    // Rebuild objects from JSON
+    this.#workouts = localWorkouts.map(workout => {
+      let obj;
+      if (workout.type === 'running') {
+        obj = new Running(
+          workout.coords,
+          workout.distance,
+          workout.duration,
+          workout.cadence
+        );
+      }
+      if (workout.type === 'cycling') {
+        obj = new Cycling(
+          workout.coords,
+          workout.distance,
+          workout.duration,
+          workout.elevationGain
+        );
+      }
+      obj.type = workout.type;
+      obj.date = workout.date;
+      obj.id = workout.id;
+      return obj;
+    });
+
     this.#workouts.forEach(workout => {
       this._renderWorkoutMarkerAndPopup(workout);
       this._renderWorkoutData(workout);
@@ -264,11 +290,19 @@ class App {
     // Get workout ID
     const id = e.target.closest('li').dataset.id;
 
-    // Find workout object and its coords
-    const coords = this.#workouts.find(workout => workout.id === id).coords;
+    // Find workout object
+    const workout = this.#workouts.find(workout => workout.id === id);
 
     // Move map to coords
-    this.#map.setView(coords);
+    this.#map.setView(workout.coords);
+
+    // Edit workout
+    // this._showForm();
+    // inputType.value = workout.type;
+    // inputDistance.value = workout.distance;
+    // inputDuration.value = workout.duration;
+    // inputCadence.value = workout?.cadence;
+    // inputElevation.value = workout?.elevation;
   }
 }
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Speech Synthesis</title>
+        <link
+            href="https://fonts.googleapis.com/css?family=Pacifico"
+            rel="stylesheet"
+            type="text/css"
+        />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="voiceinator">
+            <h1>The Voiceinator 5000</h1>
+
+            <select name="voice" id="voices">
+                <option value="">Select A Voice</option>
+            </select>
+
+            <label for="rate">Rate:</label>
+            <input
+                name="rate"
+                type="range"
+                min="0"
+                max="3"
+                value="1"
+                step="0.1"
+            />
+
+            <label for="pitch">Pitch:</label>
+
+            <input name="pitch" type="range" min="0" max="2" step="0.1" />
+            <textarea name="text">Hello! I love JavaScript 👍</textarea>
+            <button id="stop">Stop!</button>
+            <button id="speak">Speak</button>
+        </div>
+
+        <script>
+            const synth = speechSynthesis;
+            let voices;
+
+            const voiceSelect = document.querySelector('[name="voice"]');
+            const voiceOptions = document.querySelectorAll(
+                '[type="range"], [name="text"]'
+            );
+            const speakButton = document.querySelector('#speak');
+            const stopButton = document.querySelector('#stop');
+
+            function loadVoices() {
+                voices = synth.getVoices();
+                console.log(voices);
+                voiceSelect.innerHTML = '';
+                voices.forEach((voice, i) => {
+                    if (voice.lang.includes('en')) {
+                        const option = document.createElement('option');
+                        option.textContent = `${voice.name} (${voice.lang})`;
+                        option.value = i;
+                        voiceSelect.appendChild(option);
+                    }
+                });
+            }
+
+            // in Google Chrome the voices are not ready on page load
+            if ('onvoiceschanged' in synth) synth.onvoiceschanged = loadVoices;
+            else loadVoices();
+
+            function speakingStart() {
+                const msg = new SpeechSynthesisUtterance(voiceOptions[2].value);
+                msg.voice = voices[voiceSelect.value];
+                msg.rate = voiceOptions[0].value;
+                msg.pitch = voiceOptions[1].value;
+                msg.volume = 1;
+                console.log(msg);
+                synth.cancel();
+                synth.speak(msg);
+            }
+            speakButton.addEventListener('click', speakingStart);
+
+            function speakingStop() {
+                synth.cancel();
+            }
+            stopButton.addEventListener('click', speakingStop);
+        </script>
+    </body>
+</html>

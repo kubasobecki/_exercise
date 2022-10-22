@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Console Tricks!</title>
+    </head>
+    <body>
+        <p onClick="makeGreen()">×BREAK×DOWN×</p>
+
+        <script>
+            const dogs = [
+                { name: 'Snickers', age: 2 },
+                { name: 'hugo', age: 8 }
+            ];
+
+            function makeGreen() {
+                const p = document.querySelector('p');
+                p.style.color = '#BADA55';
+                p.style.fontSize = '50px';
+            }
+
+            // Regular
+            console.log('Yellow there!');
+            // Interpolated
+            const x = 'are';
+            console.log('Yellow there %s! How %s you?', 'mate', x);
+
+            // Styled
+            console.log(
+                'Yellow there %cmate!%c How are you%c?',
+                'font-size: 24px;',
+                '',
+                'background: red'
+            );
+
+            // warning!
+            console.warn('WARNING YO!');
+
+            // Error :|
+            console.error('ERROR YO!');
+
+            // Info
+            console.info('Info yo!');
+
+            // Testing
+            console.assert(1 === 1, 'That is so wrong mate!');
+            console.assert(1 === 2, 'That is so wrong mate!');
+            const p = document.querySelector('p');
+            console.assert(
+                p.classList.contains('yo'),
+                'No such class found on the element mate!'
+            );
+
+            // clearing
+            // console.clear();
+
+            // Viewing DOM Elements
+            console.log(p);
+            console.dir(p);
+
+            // Grouping together
+            dogs.forEach(dog => {
+                console.group(dog.name);
+                // console.groupCollapsed(dog.name);
+                console.log(`This dog is named ${dog.name}`);
+                console.log(`${dog.name} is ${dog.age} years old`);
+                console.log(`which is ${dog.age * 7} dog years old`);
+                console.groupEnd(dog.name);
+            });
+
+            // counting
+            console.count('Kaboom!');
+            console.count('Kaboom!');
+            console.count('POW!');
+            console.count('Kaboom!');
+            console.count('Kaboom!');
+            console.count('POW!');
+            console.count('POW!');
+            console.count('Kaboom!');
+            console.count('Kaboom!');
+
+            // timing
+            console.time('Fetching data');
+            fetch('https://api.github.com/users/kubasobecki')
+                .then(res => res.json())
+                .then(data => {
+                    console.timeEnd('Fetching data');
+                    console.log(data);
+                });
+
+            //table
+            console.table(dogs);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>HTML5 Canvas</title>
+    </head>
+    <body>
+        <canvas id="draw" width="800" height="800"></canvas>
+        <script>
+            const canvas = document.querySelector('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            let lastX = 0,
+                lastY = 0,
+                hue = 0,
+                lineWidth = 1;
+
+            let direction = true;
+
+            const getlineWidth = () => {
+                if (lineWidth >= 100 || lineWidth <= 0) direction = !direction;
+                direction ? lineWidth++ : lineWidth--;
+                return lineWidth;
+            };
+
+            const draw = e => {
+                const { offsetX: x, offsetY: y } = e;
+                if (e.buttons !== 1) {
+                    [lastX, lastY] = [x, y];
+                    return;
+                }
+
+                ctx.strokeStyle = `hsl(${hue++}, 100%, 50%)`;
+                if (hue > 359) hue = 0;
+                ctx.lineWidth = getlineWidth();
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                [lastX, lastY] = [x, y];
+                console.log(hue);
+            };
+
+            canvas.addEventListener('mousemove', draw);
+        </script>
+
+        <style>
+            html,
+            body {
+                margin: 0;
+            }
+        </style>
+    </body>
+</html>

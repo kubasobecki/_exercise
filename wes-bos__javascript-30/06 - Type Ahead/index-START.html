@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Type Ahead 👀</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <form class="search-form">
+            <input type="text" class="search" placeholder="City or State" />
+            <ul class="suggestions">
+                <li>Filter for a city</li>
+                <li>or a state</li>
+            </ul>
+        </form>
+        <script>
+            'use strice';
+            const userInputEl = document.querySelector('.search');
+            const suggestionsEl = document.querySelector('.suggestions');
+            const endpoint =
+                'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+            const cities = [];
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => cities.push(...data));
+
+            const getSuggestions = text => {
+                const regex = new RegExp(text, 'gi');
+                return cities.filter(
+                    obj => obj.city.match(regex) || obj.state.match(regex)
+                );
+            };
+
+            function displaySuggestions() {
+                // don't search for spaces only
+                if (this.value.trim() === '') this.value = this.value.trim();
+
+                // display default info if no input
+                if (this.value === '') {
+                    suggestionsEl.innerHTML =
+                        '<li>Filter for a city</li><li>or a state</li>';
+                    return;
+                }
+
+                const suggestions = getSuggestions(this.value);
+
+                //
+                if (suggestions.length < 1) {
+                    suggestionsEl.innerHTML = `<li>No results...</li>`;
+                    return;
+                }
+
+                const results = suggestions
+                    .map(suggestion => {
+                        const regex = new RegExp(this.value, 'gi');
+                        const cityName = suggestion.city.replace(
+                            regex,
+                            `<span class="hl">${this.value}</span>`
+                        );
+                        const stateName = suggestion.state.replace(
+                            regex,
+                            `<span class="hl">${this.value}</span>`
+                        );
+                        return `
+                                  <li>
+                                    <span class="name">${cityName}, ${stateName}</span>
+                                    <span class="population">${(+suggestion.population).toLocaleString(
+                                        'en-US'
+                                    )}</span>
+                                  </li>`;
+                    })
+                    .join('');
+                suggestionsEl.innerHTML = results;
+            }
+
+            userInputEl.addEventListener('keyup', displaySuggestions);
+        </script>
+    </body>
+</html>

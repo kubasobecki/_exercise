@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../assets/style.css" />
+        <title>CSS Grid Fundamentals!</title>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="item">01</div>
+            <div class="item">02</div>
+            <div class="item">03</div>
+            <div class="item">04</div>
+            <div class="item">05</div>
+            <div class="item">06</div>
+            <div class="item">07</div>
+            <div class="item">08</div>
+            <div class="item">09</div>
+            <div class="item">10</div>
+        </div>
+        <style>
+            .container {
+                display: grid;
+                /* grid-template-columns: 1fr 2fr 3fr 4fr 5fr; */
+                grid-template-columns: repeat(5, 1fr);
+                grid-template-rows: 100px 200px;
+                gap: 10px;
+            }
+        </style>
+    </body>
+</html>

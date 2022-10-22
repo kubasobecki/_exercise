@@ -258,6 +258,9 @@ class App {
   }
 
   _moveToMarker(e) {
+    // Guard statement
+    if (!e.target.closest('li')) return;
+
     // Get workout ID
     const id = e.target.closest('li').dataset.id;
 

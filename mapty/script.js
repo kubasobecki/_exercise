@@ -10,7 +10,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
-// let map, mapEvent;
+const workoutList = document.querySelector('.workouts');
 
 class Workout {
   date = new Date();
@@ -64,6 +64,7 @@ class App {
     this._getPosition();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
+    workoutList.addEventListener('click', this._moveToMarker.bind(this));
   }
 
   _getPosition() {
@@ -250,12 +251,21 @@ class App {
 
   _loadWorkouts() {
     this.#workouts = JSON.parse(localStorage.getItem('workouts')) ?? [];
-    console.log(this.#workouts);
     this.#workouts.forEach(workout => {
-      console.log(workout);
       this._renderWorkoutMarkerAndPopup(workout);
       this._renderWorkoutData(workout);
     });
+  }
+
+  _moveToMarker(e) {
+    // Get workout ID
+    const id = e.target.closest('li').dataset.id;
+
+    // Find workout object and its coords
+    const coords = this.#workouts.find(workout => workout.id === id).coords;
+
+    // Move map to coords
+    this.#map.setView(coords);
   }
 }
 

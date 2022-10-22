@@ -123,13 +123,8 @@ class App {
   _newWorkout(e) {
     e.preventDefault();
 
-    // Initialize workout
-    let workout;
-
     // Get data from the form
     const type = inputType.value;
-    const month = months[new Date().getMonth()];
-    const day = new Date().getDate();
     const coords = this.#mapEvent.latlng;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
@@ -138,6 +133,9 @@ class App {
 
     // Validate data
     if (!this._validateFields()) return;
+
+    // Initialize workout
+    let workout;
 
     // If running workout, create Running object
     if (type === 'running')
@@ -148,24 +146,49 @@ class App {
       workout = new Cycling(coords, distance, duration, elevation);
 
     // Add new object to the workouts array
+    console.log(workout);
+    console.log();
     this.#workouts.push(workout);
-    console.log(this.#workouts);
 
     // Render workout on the map as a marker and popup
-    const popup = L.popup({
-      className: `${inputType.value}-popup`,
-      autoClose: false,
-      closeOnClick: false,
-    }).setContent(`${type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} on ${month} ${day}`);
-
-    L.marker(coords).addTo(this.#map).bindPopup(popup).openPopup();
+    this._renderWorkoutMarkerAndPopup(workout);
 
     // Render workout on the list
+    this._renderWorkoutData(workout);
+
+    // Hide and clear form
+    form.classList.add('hidden');
+    form.style.display = 'none';
+    inputDistance.value = '';
+    inputDuration.value = '';
+    inputCadence.value = '';
+    inputElevation.value = '';
+  }
+
+  // Render workout on the map as a marker and popup
+  _renderWorkoutMarkerAndPopup(workout) {
+    const type = workout.constructor.name.toLocaleLowerCase();
+    const popup = L.popup({
+      className: `${type}-popup`,
+      autoClose: false,
+      closeOnClick: false,
+    }).setContent(
+      `${type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} on ${
+        months[workout.date.getMonth()]
+      } ${workout.date.getDate()}`
+    );
+
+    L.marker(workout.coords).addTo(this.#map).bindPopup(popup).openPopup();
+  }
+
+  // Render workout on the list
+  _renderWorkoutData(workout) {
+    const type = workout.constructor.name.toLocaleLowerCase();
     let workoutHTML = `
       <li class="workout workout--${type}" data-id="${workout.id}">
           <h2 class="workout__title">${
             type[0].toUpperCase() + type.slice(1)
-          } on ${month} ${day}</h2>
+          } on ${months[workout.date.getMonth()]} ${workout.date.getDate()}</h2>
           <div class="workout__details">
             <span class="workout__icon">${
               workout.type === 'running' ? '🏃‍♂️' : '🚴‍♂️'
@@ -210,23 +233,6 @@ class App {
       `;
 
     form.insertAdjacentHTML('afterend', workoutHTML);
-
-    // Hide and clear form
-    form.classList.add('hidden');
-    form.style.display = 'none';
-    inputDistance.value = '';
-    inputDuration.value = '';
-    inputCadence.value = '';
-    inputElevation.value = '';
-
-    // const allWorkouts = JSON.parse(localStorage.getItem('workouts')) ?? [];
-    // console.log(allWorkouts);
-    // const newWorkouts = [...allWorkouts, currentWorkout];
-    // console.log(newWorkouts);
-    // localStorage.setItem('workouts', JSON.stringify(newWorkouts));
-
-    // renderMarkerWithPopup();
-    // renderWorkout();
   }
 }
 

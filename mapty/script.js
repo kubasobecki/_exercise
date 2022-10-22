@@ -27,6 +27,7 @@ class Running extends Workout {
   constructor(coords, distance, duration, cadence) {
     super(coords, distance, duration);
     this.cadence = cadence;
+    this.type = 'running';
     this.calcPace();
   }
 
@@ -41,6 +42,7 @@ class Cycling extends Workout {
     super(coords, distance, duration);
     this.elevationGain = elevationGain;
     this.calcSpeed();
+    this.type = 'cycling';
   }
 
   calcSpeed() {
@@ -56,7 +58,7 @@ class Cycling extends Workout {
 class App {
   #map;
   #mapEvent;
-  #workouts = new Array();
+  #workouts;
 
   constructor() {
     this._getPosition();
@@ -94,6 +96,9 @@ class App {
       this.#mapEvent = mapE;
       this._showForm();
     });
+
+    // Load local storage
+    this._loadWorkouts();
   }
 
   _showForm() {
@@ -145,37 +150,29 @@ class App {
     if (type === 'cycling')
       workout = new Cycling(coords, distance, duration, elevation);
 
-    // Add new object to the workouts array
-    console.log(workout);
-    console.log();
-    this.#workouts.push(workout);
-
     // Render workout on the map as a marker and popup
     this._renderWorkoutMarkerAndPopup(workout);
 
     // Render workout on the list
     this._renderWorkoutData(workout);
 
+    // Store workout in localstorage
+    this._storeWorkouts(workout);
+
     // Hide and clear form
-    form.classList.add('hidden');
-    form.style.display = 'none';
-    inputDistance.value = '';
-    inputDuration.value = '';
-    inputCadence.value = '';
-    inputElevation.value = '';
+    this._clearHideForm();
   }
 
   // Render workout on the map as a marker and popup
   _renderWorkoutMarkerAndPopup(workout) {
-    const type = workout.constructor.name.toLocaleLowerCase();
     const popup = L.popup({
-      className: `${type}-popup`,
+      className: `${workout.type}-popup`,
       autoClose: false,
       closeOnClick: false,
     }).setContent(
-      `${type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} on ${
-        months[workout.date.getMonth()]
-      } ${workout.date.getDate()}`
+      `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♂️'} on ${
+        months[new Date(workout.date).getMonth()]
+      } ${new Date(workout.date).getDate()}`
     );
 
     L.marker(workout.coords).addTo(this.#map).bindPopup(popup).openPopup();
@@ -183,12 +180,13 @@ class App {
 
   // Render workout on the list
   _renderWorkoutData(workout) {
-    const type = workout.constructor.name.toLocaleLowerCase();
     let workoutHTML = `
-      <li class="workout workout--${type}" data-id="${workout.id}">
+      <li class="workout workout--${workout.type}" data-id="${workout.id}">
           <h2 class="workout__title">${
-            type[0].toUpperCase() + type.slice(1)
-          } on ${months[workout.date.getMonth()]} ${workout.date.getDate()}</h2>
+            workout.type[0].toUpperCase() + workout.type.slice(1)
+          } on ${months[new Date(workout.date).getMonth()]} ${new Date(
+      workout.date
+    ).getDate()}</h2>
           <div class="workout__details">
             <span class="workout__icon">${
               workout.type === 'running' ? '🏃‍♂️' : '🚴‍♂️'
@@ -202,7 +200,7 @@ class App {
             <span class="workout__unit">min</span>
           </div>`;
 
-    if (type === 'running')
+    if (workout.type === 'running')
       workoutHTML += `
           <div class="workout__details">
             <span class="workout__icon">⚡️</span>
@@ -217,7 +215,7 @@ class App {
         </li>
       `;
 
-    if (type === 'cycling')
+    if (workout.type === 'cycling')
       workoutHTML += `
           <div class="workout__details">
             <span class="workout__icon">⚡️</span>
@@ -233,6 +231,31 @@ class App {
       `;
 
     form.insertAdjacentHTML('afterend', workoutHTML);
+  }
+
+  _clearHideForm() {
+    form.classList.add('hidden');
+    form.style.display = 'none';
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
+  }
+
+  _storeWorkouts(workout) {
+    this.#workouts.push(workout);
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _loadWorkouts() {
+    this.#workouts = JSON.parse(localStorage.getItem('workouts')) ?? [];
+    console.log(this.#workouts);
+    this.#workouts.forEach(workout => {
+      console.log(workout);
+      this._renderWorkoutMarkerAndPopup(workout);
+      this._renderWorkoutData(workout);
+    });
   }
 }
 

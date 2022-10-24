@@ -196,6 +196,7 @@ navigator.geolocation.getCurrentPosition(e =>
 ///////////////////////////////////////
 // EVENT LOOP, CALL STACK vs. CALLBACK QUEUE vs. MICROTASK QUEUE
 ///////////////////////////////////////
+/*
 console.log('test start');
 setTimeout(() => console.log(`0 seconds timer`), 0);
 Promise.resolve('Resolved promise 1').then(res => console.log(res));
@@ -204,10 +205,55 @@ Promise.resolve('Resolved promise 2').then(res => {
   console.log(res);
 });
 console.log('test end');
-
+*/
 ///////////////////////////////////////
 // BUILDING PROMISES
 ///////////////////////////////////////
+
+// Executor function
+const promise = new Promise(function (resolve, reject) {
+  console.log('Lottery draw is taking place right now... 🔮');
+  setTimeout(function () {
+    if (Math.random() >= 0.5) resolve('You WIN 🥇🥇🥇');
+    else reject(new Error('Booo, you lost your money 💩'));
+  }, 2000);
+});
+
+promise.then(res => console.log(res)).catch(err => console.error(err.message));
+
+// PROMISIFYING setTimeout
+
+function wait(seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
+// No callback hell, YEY 😊
+wait(1)
+  .then(() => {
+    console.log('1 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('2 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('3 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('4 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('5 second passed');
+  });
+
+// Resolved/Rejected immediately
+Promise.resolve('RESOLVED!').then(res => console.log(res));
+Promise.reject(new Error('REJECTED!')).catch(err => console.error(err.message));
 
 ///////////////////////////////////////
 // Coding Challenge #2

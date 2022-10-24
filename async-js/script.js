@@ -171,6 +171,26 @@ TEST COORDINATES 2: -33.933, 18.474
 
 GOOD LUCK 😀
 */
+function whereAmI(lat, lon) {
+  fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`)
+    .then(res => {
+      if (!res.ok)
+        throw new Error(`Problem with reverse geocoding: (${res.status})`);
+      return res.json();
+    })
+    .then(data => {
+      console.log(`You are in ${data.city}, ${data.country}`);
+      getCountryData(data.country);
+    })
+    .catch(err => console.error(`💥💥💥 ${err.message} 💥💥💥`));
+}
+
+navigator.geolocation.getCurrentPosition(e =>
+  whereAmI(e.coords.latitude, e.coords.longitude)
+);
+// whereAmI(52.4052, 16.9339);
+// whereAmI(19.037, 72.873);
+// whereAmI(-33.933, 18.474);
 
 ///////////////////////////////////////
 // Coding Challenge #2

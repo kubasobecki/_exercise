@@ -170,27 +170,44 @@ TEST COORDINATES 2: 19.037, 72.873
 TEST COORDINATES 2: -33.933, 18.474
 
 GOOD LUCK 😀
-*/
+
 function whereAmI(lat, lon) {
-  fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`)
+    fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`)
     .then(res => {
-      if (!res.ok)
+        if (!res.ok)
         throw new Error(`Problem with reverse geocoding: (${res.status})`);
-      return res.json();
+        return res.json();
     })
     .then(data => {
-      console.log(`You are in ${data.city}, ${data.country}`);
-      getCountryData(data.country);
+        console.log(`You are in ${data.city}, ${data.country}`);
+        getCountryData(data.country);
     })
     .catch(err => console.error(`💥💥💥 ${err.message} 💥💥💥`));
 }
 
 navigator.geolocation.getCurrentPosition(e =>
-  whereAmI(e.coords.latitude, e.coords.longitude)
-);
-// whereAmI(52.4052, 16.9339);
-// whereAmI(19.037, 72.873);
-// whereAmI(-33.933, 18.474);
+    whereAmI(e.coords.latitude, e.coords.longitude)
+    );
+    // whereAmI(52.4052, 16.9339);
+    // whereAmI(19.037, 72.873);
+    // whereAmI(-33.933, 18.474);
+*/
+
+///////////////////////////////////////
+// EVENT LOOP, CALL STACK vs. CALLBACK QUEUE vs. MICROTASK QUEUE
+///////////////////////////////////////
+console.log('test start');
+setTimeout(() => console.log(`0 seconds timer`), 0);
+Promise.resolve('Resolved promise 1').then(res => console.log(res));
+Promise.resolve('Resolved promise 2').then(res => {
+  for (let i = 10e8; i > 0; i--) {}
+  console.log(res);
+});
+console.log('test end');
+
+///////////////////////////////////////
+// BUILDING PROMISES
+///////////////////////////////////////
 
 ///////////////////////////////////////
 // Coding Challenge #2

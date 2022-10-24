@@ -211,6 +211,7 @@ console.log('test end');
 ///////////////////////////////////////
 
 // Executor function
+/*
 const promise = new Promise(function (resolve, reject) {
   console.log('Lottery draw is taking place right now... 🔮');
   setTimeout(function () {
@@ -228,8 +229,9 @@ function wait(seconds) {
     setTimeout(resolve, seconds * 1000);
   });
 }
-
+*/
 // No callback hell, YEY 😊
+/*
 wait(1)
   .then(() => {
     console.log('1 second passed');
@@ -250,10 +252,51 @@ wait(1)
   .then(() => {
     console.log('5 second passed');
   });
-
+*/
 // Resolved/Rejected immediately
-Promise.resolve('RESOLVED!').then(res => console.log(res));
-Promise.reject(new Error('REJECTED!')).catch(err => console.error(err.message));
+/*
+const resolved = Promise.resolve('RESOLVED!');
+resolved.then(res => console.log(res));
+
+const rejected = Promise.reject(new Error('REJECTED!'));
+rejected.catch(err => console.error(err.message));
+*/
+///////////////////////////////////////
+// PROMISIFY GEOLOCATION
+///////////////////////////////////////
+
+function getPosition() {
+  return new Promise((resolve, reject) => {
+    // navigator.geolocation.getCurrentPosition(
+    //   e => resolve(e.coords),
+    //   err => reject(new Error(`couldn't get your location: ${err.message}`))
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+}
+getPosition()
+  .then(res => console.log(res.coords))
+  .catch(err => console.error(err.message));
+
+function whereAmI() {
+  getPosition()
+    .then(res => {
+      const { latitude: lat, longitude: lon } = res.coords;
+      return fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`);
+    })
+    .then(res => {
+      if (!res.ok)
+        throw new Error(`Problem with reverse geocoding: (${res.status})`);
+      return res.json();
+    })
+    .then(data => {
+      console.log(`You are in ${data.city}, ${data.country}`);
+      getCountryData(data.country);
+    })
+    .catch(err => console.error(`💥💥💥 ${err.message} 💥💥💥`));
+}
+
+whereAmI();
 
 ///////////////////////////////////////
 // Coding Challenge #2

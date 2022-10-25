@@ -429,7 +429,7 @@ createImage2('img/img-1.jpg')
 // the same as:
 // const res2 = fetch(`https://restcountries.com/v2/name/${country}`);
 // res2.then(res => res.json()).then(data => renderCountry(data[0]));
-
+/*
 const getPosition = () =>
   new Promise((resolve, reject) =>
     navigator.geolocation.getCurrentPosition(resolve, reject)
@@ -478,6 +478,32 @@ async function whereAmI() {
     console.log('Finished! LoL');
   }
 })();
+*/
+
+///////////////////////////////////////
+// RUNNING PROMISES IN PARALLEL
+///////////////////////////////////////
+
+async function get3Countries(c1, c2, c3) {
+  try {
+    // const [[data1], [data2], [data3]] = await Promise.all([
+    //   getJSON(`https://restcountries.com/v2/name/${c1}`),
+    //   getJSON(`https://restcountries.com/v2/name/${c2}`),
+    //   getJSON(`https://restcountries.com/v2/name/${c3}`),
+    // ]);
+    // console.log(data1.capital, data2.capital, data3.capital);
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v2/name/${c1}`),
+      getJSON(`https://restcountries.com/v2/name/${c2}`),
+      getJSON(`https://restcountries.com/v2/name/${c3}`),
+    ]);
+    console.log(data.map(c => c[0].capital));
+  } catch (err) {
+    console.error(err.message);
+  }
+}
+
+get3Countries('germany', 'usa', 'poland');
 
 ///////////////////////////////////////
 // Coding Challenge #3

@@ -486,12 +486,6 @@ async function whereAmI() {
 
 async function get3Countries(c1, c2, c3) {
   try {
-    // const [[data1], [data2], [data3]] = await Promise.all([
-    //   getJSON(`https://restcountries.com/v2/name/${c1}`),
-    //   getJSON(`https://restcountries.com/v2/name/${c2}`),
-    //   getJSON(`https://restcountries.com/v2/name/${c3}`),
-    // ]);
-    // console.log(data1.capital, data2.capital, data3.capital);
     const data = await Promise.all([
       getJSON(`https://restcountries.com/v2/name/${c1}`),
       getJSON(`https://restcountries.com/v2/name/${c2}`),
@@ -504,6 +498,32 @@ async function get3Countries(c1, c2, c3) {
 }
 
 get3Countries('germany', 'usa', 'poland');
+
+///////////////////////////////////////
+// RUNNING PROMISES IN RACE
+///////////////////////////////////////
+
+(async function get3CountriesRace() {
+  try {
+    const data = await Promise.race([
+      getJSON(`https://restcountries.com/v2/name/mexico`),
+      getJSON(`https://restcountries.com/v2/name/argentina`),
+      getJSON(`https://restcountries.com/v2/name/uruguay`),
+      timeout(200),
+    ]);
+    console.log(data[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+})();
+
+async function timeout(milisec) {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('REQUEST TOOK TOO LONG! 💩'));
+    }, milisec);
+  });
+}
 
 ///////////////////////////////////////
 // Coding Challenge #3

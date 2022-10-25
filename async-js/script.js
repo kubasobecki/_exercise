@@ -491,7 +491,10 @@ async function get3Countries(c1, c2, c3) {
       getJSON(`https://restcountries.com/v2/name/${c2}`),
       getJSON(`https://restcountries.com/v2/name/${c3}`),
     ]);
-    console.log(data.map(c => c[0].capital));
+    console.log(
+      'Promise.all:',
+      data.map(c => c[0].capital)
+    );
   } catch (err) {
     console.error(err.message);
   }
@@ -511,7 +514,7 @@ get3Countries('germany', 'usa', 'poland');
       getJSON(`https://restcountries.com/v2/name/uruguay`),
       timeout(200),
     ]);
-    console.log(data[0]);
+    console.log('Promise.race', data[0]);
   } catch (err) {
     console.error(err.message);
   }
@@ -524,6 +527,27 @@ async function timeout(milisec) {
     }, milisec);
   });
 }
+
+///////////////////////////////////////
+// RUNNING PROMISES IN ALLSETTLED
+///////////////////////////////////////
+
+(async function get3CountriesAllSettled() {
+  try {
+    const data = await Promise.allSettled([
+      getJSON(`https://restcountries.com/v2/name/mexico`),
+      getJSON(`https://restcountries.com/v2/name/argentina`),
+      getJSON(`https://restcountries.com/v2/name/uruguay`),
+      timeout(200),
+    ]);
+    console.log(
+      'Promise.allSettled:',
+      data.map(d => d)
+    );
+  } catch (err) {
+    console.error(err.message);
+  }
+})();
 
 ///////////////////////////////////////
 // Coding Challenge #3

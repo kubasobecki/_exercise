@@ -414,8 +414,6 @@ createImage2('img/img-1.jpg')
   })
   .catch(err => console.error(err.message));
 */
-// PART 2
-// my solution
 
 ///////////////////////////////////////
 // CONSUMING PROMISES WITH ASYNC/AWAIT
@@ -483,7 +481,7 @@ async function whereAmI() {
 ///////////////////////////////////////
 // RUNNING PROMISES IN PARALLEL
 ///////////////////////////////////////
-
+/*
 async function get3Countries(c1, c2, c3) {
   try {
     const data = await Promise.all([
@@ -566,6 +564,7 @@ async function timeout(milisec) {
     console.error(err.message);
   }
 })();
+*/
 
 ///////////////////////////////////////
 // Coding Challenge #3
@@ -587,3 +586,76 @@ TEST DATA: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']. To test, turn of
 
 GOOD LUCK 😀
 */
+
+// PART 1
+
+async function loadNPause() {
+  try {
+    let img = await createImage2('img/img-1.jpg');
+    console.log('image 1 loaded');
+
+    await wait(2);
+    img.style.display = 'none';
+    img = await createImage2('img/img-2.jpg');
+    console.log('image 2 loaded');
+
+    await wait(2);
+    img.style.display = 'none';
+    img = await createImage2('img/img-3.jpg');
+    console.log('image 3 loaded');
+  } catch (err) {
+    console.error(err.message);
+  }
+}
+
+// loadNPause();
+
+function createImage2(imgPath) {
+  const imgContainer = document.querySelector('.images');
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.classList.add('images');
+    img.src = imgPath;
+
+    img.addEventListener('load', () => {
+      imgContainer.append(img);
+      resolve(img);
+    });
+
+    img.addEventListener('error', () =>
+      reject(new Error('💥💥💥Image not found💥💥💥'))
+    );
+  });
+}
+
+function wait(seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
+// PART 2
+async function loadAll(imgArr) {
+  try {
+    // Here I disagree with tutor about having to put async/await into .map callback
+    // Since createImage2 function returns a promise anyway,
+    // the resulting imgs array of promises can still be processed by Promise.all().
+    // There is no difference in how any of below works (in this particular case at least)
+
+    // const imgs = await imgArr.map(async path => await createImage2(path));
+    // const imgs = await imgArr.map(path => createImage2(path));
+    // const imgs = imgArr.map(async path => await createImage2(path));
+    const imgs = imgArr.map(path => createImage2(path));
+    // console.log(imgs); // returns array of promises
+
+    const all = await Promise.all(imgs);
+    // console.log(all); // returns array of image element
+
+    all.forEach(img => img.classList.add('parallel'));
+  } catch (err) {
+    console.error(err.message);
+  }
+  //
+}
+
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);

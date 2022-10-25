@@ -2,6 +2,7 @@
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
+countriesContainer.style.opacity = '1';
 
 ///////////////////////////////////////
 // OLD SCHOOL WAY OF AJAX REQUEST
@@ -325,6 +326,7 @@ TEST DATA: Images in the img folder. Test the error handler by passing a wrong i
 GOOD LUCK 😀
 */
 
+/*
 const imgContainer = document.querySelector('.images');
 
 function wait(seconds) {
@@ -334,7 +336,6 @@ function wait(seconds) {
 }
 
 // MY SOLUTION
-/*
 let currentImage;
 
 function createImage(imgPath) {
@@ -415,6 +416,68 @@ createImage2('img/img-1.jpg')
 */
 // PART 2
 // my solution
+
+///////////////////////////////////////
+// CONSUMING PROMISES WITH ASYNC/AWAIT
+///////////////////////////////////////
+
+// This is:
+// const res = await fetch(`https://restcountries.com/v2/name/${country}`);
+// const data = await res.json();
+// renderCountry(data[0]);
+
+// the same as:
+// const res2 = fetch(`https://restcountries.com/v2/name/${country}`);
+// res2.then(res => res.json()).then(data => renderCountry(data[0]));
+
+const getPosition = () =>
+  new Promise((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  );
+
+async function whereAmI() {
+  try {
+    // Geolocation
+    const geo = await getPosition();
+    const { latitude: lat, longitude: lon } = geo.coords;
+
+    // Reversed geocoding
+    const rGeo = await fetch(`https://geocode.xyz/${lat},${lon}?geoit=json`);
+    if (!rGeo.ok) throw new Error(`Couldn't get your location 💩`);
+    const rGeoData = await rGeo.json();
+
+    // Country data
+    const res = await fetch(
+      `https://restcountries.com/v2/name/${rGeoData.country}`
+    );
+    if (!res.ok) throw new Error(`Couldn't get country data 💩`);
+    const data = await res.json();
+    renderCountry(data[0]);
+
+    return `You are in ${rGeoData.city}, ${rGeoData.country}`;
+  } catch (err) {
+    renderError(err.message);
+    // Re-throw an error
+    throw err;
+  } finally {
+    console.log('As always... this always runs');
+  }
+}
+
+// whereAmI()
+//   .then(cityCountry => console.log(cityCountry))
+//   .catch(err => console.log(err.message))
+//   .finally(() => console.log('Finished! LoL'));
+
+(async () => {
+  try {
+    console.log(await whereAmI());
+  } catch (err) {
+    console.log(err.message);
+  } finally {
+    console.log('Finished! LoL');
+  }
+})();
 
 ///////////////////////////////////////
 // Coding Challenge #3

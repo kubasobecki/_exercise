@@ -210,8 +210,8 @@ console.log('test end');
 // BUILDING PROMISES
 ///////////////////////////////////////
 
-// Executor function
 /*
+// Executor function
 const promise = new Promise(function (resolve, reject) {
   console.log('Lottery draw is taking place right now... 🔮');
   setTimeout(function () {
@@ -264,7 +264,7 @@ rejected.catch(err => console.error(err.message));
 ///////////////////////////////////////
 // PROMISIFY GEOLOCATION
 ///////////////////////////////////////
-
+/*
 function getPosition() {
   return new Promise((resolve, reject) => {
     // navigator.geolocation.getCurrentPosition(
@@ -297,6 +297,7 @@ function whereAmI() {
 }
 
 whereAmI();
+*/
 
 ///////////////////////////////////////
 // Coding Challenge #2
@@ -313,7 +314,7 @@ PART 1
 If this part is too tricky for you, just watch the first part of the solution.
 
 PART 2
-2. Comsume the promise using .then and also add an error handler;
+2. Consume the promise using .then and also add an error handler;
 3. After the image has loaded, pause execution for 2 seconds using the wait function we created earlier;
 4. After the 2 seconds have passed, hide the current image (set display to 'none'), and load a second image (HINT: Use the image element returned by the createImage promise to hide the current image. You will need a global variable for that 😉);
 5. After the second image has loaded, pause execution for 2 seconds again;
@@ -323,6 +324,97 @@ TEST DATA: Images in the img folder. Test the error handler by passing a wrong i
 
 GOOD LUCK 😀
 */
+
+const imgContainer = document.querySelector('.images');
+
+function wait(seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
+// MY SOLUTION
+/*
+let currentImage;
+
+function createImage(imgPath) {
+  return new Promise((resolve, reject) => {
+    // using fetch to know if/when image was loaded
+    fetch(imgPath)
+      .then(response => {
+        if (!response.ok) reject(`💥💥💥Couldn't find image💥💥💥`);
+        return response.blob();
+      })
+      .then(blob => {
+        const img = document.createElement('img');
+        img.classList.add('images');
+        img.src = imgPath; // could be img.src = URL.createObjectURL(blob);
+        imgContainer.append(img);
+        currentImage = img;
+        resolve(img);
+      });
+  });
+}
+
+createImage('img/img-1.jpg')
+  .then(img => {
+    return wait(2);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+    return createImage('img/img-2.jpg');
+  })
+  .then(img => {
+    return wait(2);
+  })
+  .then(() => {
+    currentImage.style.display = 'none';
+    return createImage('img/img-3.jpg');
+  })
+  .catch(err => console.error(`💥💥💥 ${err.message} 💥💥💥`));
+*/
+// OTHER SOLUTION (improved)
+/*
+function createImage2(imgPath) {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.classList.add('images');
+    img.src = imgPath;
+
+    img.addEventListener('load', () => {
+      currentImage = img;
+      imgContainer.append(img);
+      resolve(img);
+    });
+
+    img.addEventListener('error', () => reject('💥💥💥Image not found💥💥💥'));
+  });
+}
+
+createImage2('img/img-1.jpg')
+  .then(img => {
+    console.log('image 1 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    return createImage2('img/img-2.jpg');
+  })
+  .then(img => {
+    currentImage.style.display = 'none';
+    console.log('image 2 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    return createImage2('img/img-3.jpg');
+  })
+  .then(img => {
+    currentImage.style.display = 'none';
+    console.log('image 3 loaded');
+  })
+  .catch(err => console.error(err.message));
+*/
+// PART 2
+// my solution
 
 ///////////////////////////////////////
 // Coding Challenge #3

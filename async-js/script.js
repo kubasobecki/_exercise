@@ -550,6 +550,24 @@ async function timeout(milisec) {
 })();
 
 ///////////////////////////////////////
+// RUNNING PROMISES IN ANY
+///////////////////////////////////////
+
+(async function get3CountriesRace() {
+  try {
+    const data = await Promise.any([
+      getJSON(`https://restcountries.com/v2/name/mexico`),
+      getJSON(`https://restcountries.com/v2/name/argentina`),
+      getJSON(`https://restcountries.com/v2/name/uruguay`),
+      timeout(200),
+    ]);
+    console.log('Promise.any', data[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+})();
+
+///////////////////////////////////////
 // Coding Challenge #3
 ///////////////////////////////////////
 

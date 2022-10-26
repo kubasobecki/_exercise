@@ -1,6 +1,13 @@
 // Exporting module
 // console.log('Exporting module');
 
+// Blocking code (top-level await)
+console.log('Started fetching users');
+const users = await fetch(`https://jsonplaceholder.typicode.com/users`);
+const usersJSON = await users.json();
+console.log(usersJSON.map(user => user.username));
+console.log('Finished fetching users');
+
 const shippingCost = 10;
 export const cart = [];
 

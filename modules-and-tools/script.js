@@ -34,7 +34,7 @@ console.log(cart);
 // console.log(
 //   `❗This should go before fetch if top-level await wasn't blocking❗`
 // );
-
+/*
 async function getLastPost() {
   try {
     const posts = await fetch(`https://jsonplaceholder.typicode.com/posts`);
@@ -52,7 +52,7 @@ async function getLastPost() {
 
 const lastPost2 = await getLastPost();
 console.log(lastPost2);
-
+*/
 //////////////////////////////////////////////////////////////////////////////
 // MODULE PATTERN (IIFE)
 //////////////////////////////////////////////////////////////////////////////
@@ -79,8 +79,61 @@ const shoppingCart2 = (function () {
     totalPrice,
     totalQuantity,
   };
+
+  shoppingCart2.addToCart('apple', 4);
+  shoppingCart2.addToCart('pizza', 2);
+  console.log(shoppingCart2.cart);
 })();
 
-shoppingCart2.addToCart('apple', 4);
-shoppingCart2.addToCart('pizza', 2);
-console.log(shoppingCart2.cart);
+//////////////////////////////////////////////////////////////////////////////
+// CommonJS Modules
+//////////////////////////////////////////////////////////////////////////////
+// export.variableName = ... (export is an object in CommonJS)
+// const { variableName } = require('filePath') - (this is how import works in CommonJS)
+
+import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+
+const state = {
+  cart: [
+    { product: 'bread', quantity: 5 },
+    { product: 'pizza', quantity: 3 },
+  ],
+  user: { loggedIn: true },
+};
+
+const stateClone = Object.assign({}, state);
+const stateCloneDeep = cloneDeep(state);
+
+console.log('stateClone: ', stateClone.user.loggedIn);
+console.log('stateCloneDeep: ', stateCloneDeep.user.loggedIn);
+
+state.user.loggedIn = false;
+
+console.log('stateClone: ', stateClone.user.loggedIn);
+console.log('stateCloneDeep: ', stateCloneDeep.user.loggedIn);
+
+//////////////////////////////////////////////////////////////////////////////
+// Parcel bundler, Babel and polyfilling stuff
+//////////////////////////////////////////////////////////////////////////////
+// Hot module replacement
+if (module.hot) module.hot.accept();
+
+class Person {
+  #greeting = 'Hey';
+  constructor(name) {
+    this.name = name;
+    console.log(`${this.#greeting}, ${this.name}!`);
+  }
+}
+const Kuba = new Person('Kuba');
+
+console.log(cart.find(el => el.qty >= 2));
+Promise.resolve('TEST').then(p => console.log(p));
+
+// Polyfilling
+import 'core-js/stable';
+// import 'core-js/stable/array/find';
+// import 'core-js/stable/promise';
+
+// Polyfilling async functions
+import 'regenerator-runtime/runtime';

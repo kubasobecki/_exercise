@@ -26,15 +26,15 @@ const controlRecipes = async function () {
 
     // 2. Render recipe
     recipeView.render(model.state.recipe);
-
-    // 3. Attach listeners
-    recipeView.addHandlerRender(controlRecipes);
   } catch (err) {
-    console.log(err.message);
+    recipeView.renderError();
   }
 };
 
-controlRecipes();
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+};
+init();
 
 // async function renderResults(results) {
 //   try {

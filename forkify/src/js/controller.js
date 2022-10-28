@@ -1,20 +1,11 @@
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 
+import { async } from 'regenerator-runtime'; // polyfill async await
 import 'core-js/stable'; // polyfill everything else
-import 'regenerator-runtime'; // polyfill async await
 
-const API_KEY = '63fc6966-cce0-42ea-ba6b-573ef866f5a4';
 const recipeContainer = document.querySelector('.recipe');
 const resultsContainer = document.querySelector('.results');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
 
 // https://forkify-api.herokuapp.com/v2
 
@@ -36,7 +27,7 @@ const controlRecipes = async function () {
     // 2. Render recipe
     recipeView.render(model.state.recipe);
   } catch (err) {
-    console.error(err);
+    console.log(err.message);
   }
 };
 

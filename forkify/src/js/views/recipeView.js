@@ -48,7 +48,7 @@ class RecipeView extends View {
               </svg>
             </button>
             <button class="btn--tiny btn--increase-servings">
-              <svg></svg>
+              <svg>
                 <use href="${icons}#icon-plus-circle"></use>
               </svg>
             </button>

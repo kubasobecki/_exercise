@@ -1,6 +1,7 @@
 import { async } from 'regenerator-runtime'; // polyfill async await
 import { API_URL } from './config.js';
 import { API_KEY } from './config.js';
+import { RES_PER_PAGE } from './config.js';
 import { getJSON } from './helpers.js';
 
 export const state = {
@@ -8,6 +9,8 @@ export const state = {
   search: {
     query: '',
     results: [],
+    resultsPerPage: RES_PER_PAGE,
+    currentPage: 1,
   },
 };
 
@@ -47,38 +50,12 @@ export const loadSearchResults = async function (query) {
     throw err;
   }
 };
-loadSearchResults('pizza');
 
-// async function renderResults(results) {
-//   try {
-//     const data = await results;
-//     const html = data.reduce(
-//       (html, result) =>
-//         (html += `
-//         <li class="preview">
-//           <a class="preview__link preview__link--active" href="#${result.id}">
-//             <figure class="preview__fig">
-//               <img src="${result.image_url}" alt="Test" />
-//             </figure>
-//             <div class="preview__data">
-//               <h4 class="preview__title">${result.title}</h4>
-//               <p class="preview__publisher">${result.publisher}</p>
-//               <div class="preview__user-generated ${'hidden'}">
-//                 <svg>
-//                   <use href="${icons}#icon-user"></use>
-//                 </svg>
-//               </div>
-//             </div>
-//           </a>
-//         </li>`),
-//       ''
-//     );
-//     resultsContainer.insertAdjacentHTML('beforeend', html);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
+export const getSearchResultsPage = function (page = 1) {
+  state.search.currentPage = page;
 
-// }
+  const start = (state.search.currentPage - 1) * state.search.resultsPerPage;
+  const end = start + state.search.resultsPerPage;
 
-// renderResults(getRecipes('pizza'));
-// results.insertAdjacentHTML('beforeend', renderResults(getRecipes('pizza')));
+  return state.search.results.slice(start, end);
+};

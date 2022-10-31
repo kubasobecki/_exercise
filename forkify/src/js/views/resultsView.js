@@ -7,10 +7,15 @@ class ResultsView extends View {
   _message = '';
 
   _generateMarkup() {
+    const curId = window.location.hash.slice(1);
+    console.log(curId);
+
     return this._data.reduce((html, item) => {
       return (html += `
         <li class="preview">
-            <a class="preview__link preview__link" href="#${item.id}">
+            <a class="preview__link ${
+              item.id === curId ? 'preview__link--active' : ''
+            }" href="#${item.id}">
             <figure class="preview__fig">
                 <img src="${item.image}" alt="${item.title}" />
             </figure>

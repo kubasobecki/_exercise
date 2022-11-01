@@ -19,3 +19,6 @@ export const getJSON = async function (url) {
     throw err;
   }
 };
+
+export const isBookmarked = (recipe, bookmarks) =>
+  bookmarks.some(bm => bm.id === recipe.id);

@@ -3,6 +3,7 @@ import { API_URL } from './config.js';
 import { API_KEY } from './config.js';
 import { RES_PER_PAGE } from './config.js';
 import { getJSON } from './helpers.js';
+import { isBookmarked } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -12,6 +13,7 @@ export const state = {
     resultsPerPage: RES_PER_PAGE,
     currentPage: 1,
   },
+  bookmarks: [],
 };
 
 export const loadRecipe = async function (id) {
@@ -28,6 +30,7 @@ export const loadRecipe = async function (id) {
       servings: recipe.servings,
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
+      bookmarked: isBookmarked(recipe, state.bookmarks),
     };
   } catch (err) {
     throw err;
@@ -65,4 +68,22 @@ export const updateServings = function (newServings) {
   });
 
   state.recipe.servings = newServings;
+};
+
+export const updateBookmarks = function (recipe) {
+  console.log('isBookmarked:', isBookmarked(recipe, state.bookmarks));
+
+  if (!isBookmarked(recipe, state.bookmarks)) {
+    // 1. Add bookmark
+    state.bookmarks.push(recipe);
+    // 2. Mark recipe as bookmark
+    if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+  } else {
+    // 1. Remove bookmark
+    const newBookmarks = state.bookmarks.filter(r => r.id !== state.recipe.id);
+    state.bookmarks = newBookmarks;
+    // 2. Unmark recipe as bookmark
+    if (recipe.id === state.recipe.id) state.recipe.bookmarked = false;
+  }
+  console.log(state.bookmarks);
 };

@@ -1,10 +1,8 @@
 import View from './View.js';
 import icons from 'url:../../img/icons.svg';
 
-class ResultsView extends View {
-  _parentElement = document.querySelector('.results');
-  _errorMessage = `No recipes found. Please try another one!`;
-  _message = '';
+class BookmarksView extends View {
+  _parentElement = document.querySelector('.bookmarks__list');
 
   _generateMarkup() {
     const curId = window.location.hash.slice(1);
@@ -14,7 +12,7 @@ class ResultsView extends View {
         (html += `
         <li class="preview">
             <a class="preview__link ${
-              item.id === curId ? 'preview__link--active' : ''
+              curId === item.id ? 'preview__link--active' : ''
             }" href="#${item.id}">
             <figure class="preview__fig">
                 <img src="${item.image}" alt="${item.title}" />
@@ -22,6 +20,11 @@ class ResultsView extends View {
             <div class="preview__data">
                 <h4 class="preview__title">${item.title}</h4>
                 <p class="preview__publisher">${item.publisher}</p>
+                <div class="preview__user-generated hidden">
+                    <svg>
+                        <use href="${icons}#icon-user"></use>
+                    </svg>
+                </div>
             </div>
             </a>
         </li>
@@ -31,4 +34,4 @@ class ResultsView extends View {
   }
 }
 
-export default new ResultsView();
+export default new BookmarksView();

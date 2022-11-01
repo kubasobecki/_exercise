@@ -54,7 +54,7 @@ export const loadSearchResults = async function (query) {
   }
 };
 
-export const getSearchResultsPage = function (page = 1) {
+export const getSearchResultsPage = function (page = state.search.currentPage) {
   state.search.currentPage = page;
   const start = (state.search.currentPage - 1) * state.search.resultsPerPage;
   const end = start + state.search.resultsPerPage;
@@ -71,7 +71,7 @@ export const updateServings = function (newServings) {
 };
 
 export const updateBookmarks = function (recipe) {
-  console.log('isBookmarked:', isBookmarked(recipe, state.bookmarks));
+  // console.log('isBookmarked:', isBookmarked(recipe, state.bookmarks));
 
   if (!isBookmarked(recipe, state.bookmarks)) {
     // 1. Add bookmark
@@ -85,5 +85,5 @@ export const updateBookmarks = function (recipe) {
     // 2. Unmark recipe as bookmark
     if (recipe.id === state.recipe.id) state.recipe.bookmarked = false;
   }
-  console.log(state.bookmarks);
+  // console.log(state.bookmarks);
 };

@@ -71,8 +71,6 @@ export const updateServings = function (newServings) {
 };
 
 export const updateBookmarks = function (recipe) {
-  // console.log('isBookmarked:', isBookmarked(recipe, state.bookmarks));
-
   if (!isBookmarked(recipe, state.bookmarks)) {
     // 1. Add bookmark
     state.bookmarks.push(recipe);
@@ -85,5 +83,13 @@ export const updateBookmarks = function (recipe) {
     // 2. Unmark recipe as bookmark
     if (recipe.id === state.recipe.id) state.recipe.bookmarked = false;
   }
-  // console.log(state.bookmarks);
+
+  // Store bookmarks in local storage
+  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
 };
+
+const init = function () {
+  const storage = localStorage.getItem('bookmarks');
+  if (storage) state.bookmarks = JSON.parse(storage);
+};
+init();

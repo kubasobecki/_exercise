@@ -87,11 +87,16 @@ const controlUpdateBookmark = function () {
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlInitializeBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+};
+
 const init = function () {
-  recipeView.addHandlerRender(controlRecipes);
-  recipeView.addHandlerUpdateServings(controlServings);
-  recipeView.addHandlerUpdateBookmark(controlUpdateBookmark);
+  bookmarksView.addHandlerInitialRender(controlInitializeBookmarks);
   searchView.addHandlerSearch(controlSearchResults);
+  recipeView.addHandlerRender(controlRecipes);
+  recipeView.addHandlerUpdateBookmark(controlUpdateBookmark);
+  recipeView.addHandlerUpdateServings(controlServings);
   paginationView.addHandlerClick(controlPagination);
 };
 

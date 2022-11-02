@@ -10,33 +10,29 @@ class PaginationView extends View {
       this._data.results.length / this._data.resultsPerPage
     );
 
-    const prevBtnMarkup =
-      curPage > 1
-        ? `
-        <button class="btn--inline pagination__btn--prev" data-goto="${
-          curPage - 1
-        }">
-            <svg class="search__icon">
-                <use href="${icons}#icon-arrow-left"></use>
-            </svg>
-            <span>Page ${curPage - 1}</span>
-        </button>`
-        : '';
+    const prevBtnMarkup = `
+      <button class="btn--inline pagination__btn--prev ${
+        curPage > 1 ? '' : 'hidden'
+      }" data-goto="${curPage - 1}">
+        <svg class="search__icon">
+            <use href="${icons}#icon-arrow-left"></use>
+        </svg>
+        <span>Page ${curPage - 1}</span>
+      </button>`;
 
-    const nextBtnMarkup =
-      curPage !== lastPage
-        ? `
-        <button class="btn--inline pagination__btn--next" data-goto="${
-          curPage + 1
-        }">
-            <span>Page ${curPage + 1}</span>
-            <svg class="search__icon">
-                <use href="${icons}#icon-arrow-right"></use>
-            </svg>
-        </button>`
-        : '';
+    const pageNumberOfPagesTotal = `<div class="pagination__pages-total">Page ${curPage} of ${lastPage}</div>`;
 
-    return prevBtnMarkup + nextBtnMarkup;
+    const nextBtnMarkup = `
+      <button class="btn--inline pagination__btn--next ${
+        curPage !== lastPage ? '' : 'hidden'
+      }" data-goto="${curPage + 1}">
+          <span>Page ${curPage + 1}</span>
+          <svg class="search__icon">
+              <use href="${icons}#icon-arrow-right"></use>
+          </svg>
+      </button>`;
+
+    return prevBtnMarkup + pageNumberOfPagesTotal + nextBtnMarkup;
   }
 
   addHandlerClick(handler) {

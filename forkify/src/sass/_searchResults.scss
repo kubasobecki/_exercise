@@ -12,20 +12,12 @@
 .pagination {
   margin-top: auto;
   padding: 0 3.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  &::after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-
-  &__btn {
-    &--prev {
-      float: left;
-    }
-    &--next {
-      float: right;
-    }
+  .pagination__pages-total {
+    font-size: 1rem;
   }
 }
 

@@ -4,7 +4,6 @@ import icons from 'url:../../img/icons.svg';
 class ResultsView extends View {
   _generateMarkup() {
     const curId = window.location.hash.slice(1);
-    console.log(this._data);
     return `
       <li class="preview">
         <a class="preview__link ${

@@ -117,10 +117,10 @@ const controlAddRecipe = async function (newRecipe) {
     setTimeout(() => addRecipeView.toggleWindow(), MODAL_CLOSE_SEC * 1000);
 
     // 8. Close form and restore markup
-    setTimeout(
-      () => addRecipeView.restoreFormAfterSubmission(),
-      (MODAL_CLOSE_SEC + 1) * 1000
-    );
+    setTimeout(() => {
+      addRecipeView.restoreFormAfterSubmission();
+      addRecipeView.validateIngredientsFields();
+    }, (MODAL_CLOSE_SEC + 1) * 1000);
   } catch (err) {
     addRecipeView.renderError(err.message);
   }
@@ -134,6 +134,7 @@ const init = function () {
   recipeView.addHandlerUpdateServings(controlServings);
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
+  addRecipeView.validateIngredientsFields();
 };
 
 init();

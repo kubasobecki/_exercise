@@ -92,6 +92,18 @@ class AddRecipeView extends View {
     this._parentElement.innerHTML = formMarkup;
   }
 
+  validateIngredientsFields() {
+    this._parentElement.addEventListener('focusout', e => {
+      if (!e.target.name.includes('ingredient')) return;
+
+      if (e.target.value !== '' && e.target.value.split(',').length !== 3) {
+        e.target.style.borderColor = 'red';
+      } else {
+        e.target.style.borderColor = '#ddd';
+      }
+    });
+  }
+
   _addHandlerToggleWindow() {
     [this._btnOpen, this._btnClose, this._overlay].forEach(el =>
       el.addEventListener('click', this.toggleWindow.bind(this))
